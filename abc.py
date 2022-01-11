@@ -4,7 +4,6 @@ import cv2
 from tkinter import filedialog
  
 points = []
-block_selection = False
 current_image = np.zeros((1000, 1000, 3), np.uint8)
 original = np.zeros((1000, 1000, 3), np.uint8)
 pixel_spacing = (1, 1)
@@ -31,12 +30,7 @@ def add_point(image, x, y):
     if len(points) > 1:
         cv2.line(image, points[-1], points[-2], (255, 0, 255))
     cv2.rectangle(image,(x-1,y-1), (x+1,y+1), (255,0,255))
-
-# removes selection and refreshes the image
-def clear_selection(image):
-    global current_image
-    current_image = original.copy()
-    points.clear()
+    
 
 # draws line from last point to first and calculates the square of figure
 def complete_selection(image):
@@ -48,21 +42,13 @@ def complete_selection(image):
 
 def click_event(event, x, y, flags, params):
     global current_image
-    global block_selection
     # Left click - add a point
     if event == cv2.EVENT_LBUTTONDOWN:
-        if (not block_selection):
-            add_point(current_image, x, y)
+        add_point(current_image, x, y)
 
     # Right click - complete polygon and calculate square
     if event == cv2.EVENT_RBUTTONDOWN:
         complete_selection(current_image)
-        block_selection = True
-
-    # Double click - remove square
-    if event == cv2.EVENT_LBUTTONDBLCLK:
-        clear_selection(current_image)
-        block_selection = False
 
 
 if __name__ == '__main__':
